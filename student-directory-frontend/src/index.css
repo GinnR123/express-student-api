@@ -1,0 +1,76 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 48px 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+#root { width: 100%; display: flex; justify-content: center; }
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+.card.wide { max-width: 560px; }
+
+h1 { margin: 0 0 20px; font-size: 1.5rem; }
+
+form { display: flex; flex-direction: column; gap: 6px; }
+
+label { font-size: 0.9rem; font-weight: 600; margin-top: 8px; }
+
+input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+}
+
+button {
+  margin-top: 16px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  color: #fff;
+  background: #2563eb;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { background: #1d4ed8; }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.error {
+  margin: 8px 0 0;
+  padding: 10px;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.hint { margin: 16px 0 0; font-size: 0.9rem; }
+
+.header { display: flex; justify-content: space-between; align-items: center; }
+.header h1 { margin: 0; }
+.header button { margin: 0; background: #b91c1c; }
+.header button:hover:not(:disabled) { background: #991b1b; }
+
+.students { list-style: none; padding: 0; margin: 20px 0 0; }
+.students li {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+}
+.students li span { color: #4b5563; font-size: 0.9rem; }

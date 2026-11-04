@@ -5,9 +5,11 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const studentRoutes = require("./routes/students");
 
 const app = express();
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
 mongoose
