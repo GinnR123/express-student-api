@@ -4,7 +4,7 @@ A student directory application built using React, Express, MongoDB Atlas, and J
 
 The backend handles user registration, login, and protected API requests. The React frontend connects to the backend and allows users to register, log in, view the student list, and log out.
 
-# Backend (Lesson 5)
+# Backend
 
 The backend uses Express and MongoDB Atlas to manage student records and user authentication. JWT is used to protect routes that require a logged-in user.
 
