@@ -4,6 +4,8 @@ A student directory application built using React, Express, MongoDB Atlas, and J
 
 The backend handles user registration, login, and protected API requests. The React frontend connects to the backend and allows users to register, log in, view the student list, and log out.
 
+The backend also includes an authenticated image upload endpoint that stores files in Cloudinary (Lesson 7).
+
 # Backend (Lesson 5)
 
 The backend uses Express and MongoDB Atlas to manage student records and user authentication. JWT is used to protect routes that require a logged-in user.
@@ -31,11 +33,14 @@ app.use(cors({ origin: "http://localhost:5173" }));
 
 The backend `.env` file should contain:
 
-| Variable     | Purpose                                   |
-| ------------ | ----------------------------------------- |
-| `MONGO_URI`  | MongoDB Atlas connection string           |
-| `JWT_SECRET` | Secret key used to sign and verify JWTs   |
-| `PORT`       | Server port. Defaults to 3000 if not set. |
+| Variable                | Purpose                                                                    |
+| ----------------------- | -------------------------------------------------------------------------- |
+| `MONGO_URI`             | MongoDB Atlas connection string                                            |
+| `JWT_SECRET`            | Secret key used to sign and verify JWTs                                    |
+| `PORT`                  | Server port. Defaults to 3000 if not set.                                  |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (Lesson 7)                                           |
+| `CLOUDINARY_API_KEY`    | Cloudinary API key (Lesson 7)                                              |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret (Lesson 7). Keep it private and never commit `.env`. |
 
 Start the backend:
 
@@ -43,7 +48,7 @@ Start the backend:
 node server.js
 ```
 
-# Frontend (React + Vite)
+# Frontend – React + Vite (Lesson 6)
 
 The frontend connects to the Lesson 5 backend and provides an interface for user authentication and viewing student records.
 
@@ -88,7 +93,74 @@ VITE_API_URL=http://localhost:3000
 | `/students` | Protected – requires a valid token         |
 | `/`         | Redirects based on the user's login status |
 
-# Screenshots
+# File Uploads with Multer & Cloudinary (Lesson 7)
+
+The backend accepts image uploads, sends them to Cloudinary, and returns the image URL. The upload route is protected by the same JWT middleware used in Lesson 5.
+
+## Setup
+
+Install the packages:
+
+```bash
+npm install multer cloudinary
+```
+
+Add the Cloudinary values from your dashboard to the backend `.env` file (see the table above).
+
+## Files Added
+
+| File                   | Purpose                                                         |
+| ---------------------- | --------------------------------------------------------------- |
+| `config/cloudinary.js` | Configures the Cloudinary client from environment variables     |
+| `middleware/upload.js` | Multer setup: memory storage, 5MB limit, image-only file filter |
+| `routes/upload.js`     | `POST /api/upload` route that streams the file to Cloudinary    |
+
+The route is registered in `server.js`:
+
+```js
+app.use("/api/upload", require("./routes/upload"));
+```
+
+An error-handling middleware at the end of `server.js` returns JSON errors for rejected uploads.
+
+## Upload Endpoints
+
+| Method   | Path                    | Description                                                   |
+| -------- | ----------------------- | ------------------------------------------------------------- |
+| `POST`   | `/api/upload`           | Upload one image (form field named `file`). Requires a token. |
+| `DELETE` | `/api/upload/:publicId` | Stretch challenge: delete an image. Encode `/` as `%2F`.      |
+
+Successful upload response:
+
+```json
+{
+  "url": "https://res.cloudinary.com/.../lesson7_uploads/....png",
+  "publicId": "lesson7_uploads/...."
+}
+```
+
+## Tested Cases
+
+| Test         | Result                               |
+| ------------ | ------------------------------------ |
+| Valid image  | `200` with `url` and `publicId`      |
+| No token     | `401` "No token provided"            |
+| Not an image | `500` "Only image files are allowed" |
+| No file      | `400` "No file uploaded"             |
+
+## Lesson 7 Screenshots
+
+1. `screenshot1_upload_request.png` – Thunder Client request with the Authorization header and the returned `url`.
+2. `screenshot2_cloudinary_folder.png` – Cloudinary Media Library showing the image in the `lesson7_uploads` folder.
+3. `screenshot3_image_display.png` – The image loading in the browser from the returned URL.
+
+## Reflection Question – Lesson 7
+
+**Why do we use `memoryStorage` instead of `diskStorage` when uploading to Cloudinary?**
+
+We use `memoryStorage` because the uploaded file only needs to exist long enough to be forwarded to Cloudinary. Multer keeps the file in RAM as a buffer, and we stream it directly to Cloudinary with `upload_stream`, so nothing is written to the server's disk. This avoids creating temporary files that would need to be cleaned up and works on hosting platforms with read-only or temporary file systems. The trade-off is memory usage, which is why the 5MB size limit is important.
+
+# Screenshots – Frontend Assignment (Lesson 6)
 
 Save the required screenshots in the `screenshots/` folder:
 
@@ -99,7 +171,7 @@ Save the required screenshots in the `screenshots/` folder:
 5. Protected route redirect – showing the redirect to `/login` when accessing `/students` while logged out.
 6. Browser DevTools – showing the `/api/students` request with the `Authorization: Bearer <token>` header.
 
-# Reflection Questions – Frontend Assignment
+# Reflection Questions – Frontend Assignment (Lesson 6)
 
 **1. Why do we store the token in localStorage? What is one security risk, and what is a more secure alternative?**
 
