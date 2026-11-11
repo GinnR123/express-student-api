@@ -22,6 +22,10 @@ app.use("/api/students", studentRoutes);
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/upload", require("./routes/upload"));
 
+app.use("/api/courses", require("./routes/courses"));
+app.use("/api/enrollments", require("./routes/enrollments"));
+app.use("/api/stats", require("./routes/stats"));
+
 // Must come after all routes
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
